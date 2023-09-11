@@ -1,0 +1,33 @@
+{
+  "name": "vue-dexie-indexeddb",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "preinstall": "npx only-allow bun",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
+  },
+  "dependencies": {
+    "@arco-design/web-vue": "^2.51.1",
+    "@vueuse/rxjs": "^10.4.1",
+    "dexie": "^3.2.4",
+    "fast-xml-parser": "^4.2.7",
+    "redaxios": "^0.5.1",
+    "rxjs": "^7.8.1",
+    "vue": "^3.3.2"
+  },
+  "devDependencies": {
+    "@arco-plugins/vite-vue": "^1.4.5",
+    "@tsconfig/node18": "^2.0.1",
+    "@types/node": "^18.16.8",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/tsconfig": "^0.4.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.0.4",
+    "vite": "^4.3.5",
+    "vue-tsc": "^1.6.4"
+  }
+}
