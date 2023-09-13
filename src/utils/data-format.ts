@@ -29,6 +29,11 @@ export const formatDateTime = (
   time: Date | string,
   format = "YYYY-MM-DD HH:mm:ss"
 ) => {
+  if (typeof time === "string") {
+    let _time = time.replace(" &#43;", "+");
+    const r = dayjs(_time).format(format);
+    return r;
+  }
   const r = dayjs(time).format(format);
   return r;
 };

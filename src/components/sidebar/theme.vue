@@ -43,8 +43,6 @@ watch(
 );
 
 const setTheme = (mode: "dark" | "light" | "auto") => {
-  // debugger;
-
   if (mode === "auto") {
     const isPresetDark =
       localStorage.theme === "dark" ||

@@ -15,6 +15,9 @@
             </a-avatar>
           </template> -->
           </a-list-item-meta>
+          <template #actions>
+            <span>{{ formatDateTime(item.pubDate) }}</span>
+          </template>
         </a-list-item>
       </template>
     </a-list>
@@ -27,6 +30,7 @@ import type { IPodcastItem } from "@/types";
 import { Message } from "@arco-design/web-vue";
 import { computed, inject, onMounted, ref } from "vue";
 const appStatus = inject("appStatus", ref(defaultStatus()));
+import { formatDate, formatDateTime } from "@/utils/data-format";
 
 const id = computed(() => appStatus.value.detail.id);
 

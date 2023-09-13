@@ -56,12 +56,9 @@ export const addPodcast = async (channel: any) => {
 
   podcastDB.items.clear();
 
-  debugger;
   podcastList.forEach((i) => {
     i.podcastId = res as number;
   });
-
-  debugger;
 
   podcastDB.items.bulkAdd(podcastList);
   Message.success("列表添加成功");
