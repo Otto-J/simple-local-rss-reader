@@ -7,14 +7,19 @@
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
-    "preinstall": "npx only-allow bun",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
+  "type": "module",
   "dependencies": {
     "@arco-design/web-vue": "^2.51.1",
+    "@vueuse/core": "^10.4.1",
     "@vueuse/rxjs": "^10.4.1",
+    "axios": "^1.5.0",
+    "dayjs": "^1.11.9",
     "dexie": "^3.2.4",
     "fast-xml-parser": "^4.2.7",
+    "lucide-vue-next": "^0.276.0",
+    "radix-vue": "^0.1.34",
     "redaxios": "^0.5.1",
     "rxjs": "^7.8.1",
     "vue": "^3.3.2"
@@ -25,7 +30,10 @@
     "@types/node": "^18.16.8",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/tsconfig": "^0.4.0",
+    "autoprefixer": "^10.4.15",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3",
     "typescript": "~5.0.4",
     "vite": "^4.3.5",
     "vue-tsc": "^1.6.4"
