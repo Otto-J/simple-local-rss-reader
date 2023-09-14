@@ -7,8 +7,8 @@
 wip，草稿阶段，验证想法。
 
 - [x] 填写 url 实时拉取、解析列表
-- [ ] 数据持久化到 indexedDB 中
-- [ ] 实现列表页，多 rss 源
+- [x] 数据持久化到 indexedDB 中
+- [x] 实现列表页，多 rss 源
 - [ ] 已读标记
 - [ ] optional ai 总结 description 内容
 - [ ] 美化样式
@@ -27,6 +27,17 @@ wip，草稿阶段，验证想法。
 - `arco-design` 基础组件
 - `dexie` 管理 indexedDB
 - `fast-xml-parser` 解析 xml 为 json
+
+## 路由设计
+
+layout 分成左右两列，只有右边变化
+
+- `/ -> home` init
+  - `home` blank page
+  - `list` a podcast list
+  - `add-rss` add new rss
+  - `export-and-import` export/import
+  - `settings`
 
 ## 表设计
 

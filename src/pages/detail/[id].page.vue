@@ -2,11 +2,11 @@
   <div class="w-full p-4 dark:text-slate-100 text-slate-900">
     <a-list
       :virtualListProps="{
-        height: '90vh',
+        height: '90vh'
       }"
       :data="list"
     >
-      <template #item="{ item, index }">
+      <template #item="{ item }">
         <a-list-item :key="item.id" class="hover:bg-slate-800">
           <a-list-item-meta :title="item.title" :description="item.description">
             <!-- <template #avatar>
@@ -24,38 +24,54 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { podcastDB } from "@/model/db";
-import { defaultStatus } from "@/store";
-import type { IPodcastItem } from "@/types";
-import { Message } from "@arco-design/web-vue";
-import { computed, inject, onMounted, ref } from "vue";
-const appStatus = inject("appStatus", ref(defaultStatus()));
-import { formatDate, formatDateTime } from "@/utils/data-format";
+import { podcastDB } from '@/model/db'
+import type { IPodcastItem } from '@/types'
+import { Message } from '@arco-design/web-vue'
+import { computed, ref } from 'vue'
+import { formatDateTime } from '@/utils/data-format'
+import { useRoute } from 'vue-router'
+import { watchEffect } from 'vue'
 
-const id = computed(() => appStatus.value.detail.id);
+const route = useRoute()
 
-const list = ref<IPodcastItem[]>([]);
-//  podcastId =
+const id = computed(() => {
+  const _id = (route.params as any).id as string
+  if (typeof Number(_id) === 'number') {
+    return Number(_id)
+  }
+  return _id
+})
 
-onMounted(async () => {
+const fetchList = async () => {
   if (id.value) {
     podcastDB.items
-      .where("podcastId")
+      .where('podcastId')
       .equals(id.value)
       .toArray()
       .then((res) => {
-        console.log(55, res);
-        list.value = res;
+        console.log(55, res)
+        list.value = res
       })
       .catch((err) => {
-        Message.error(err);
-      });
+        Message.error(err)
+      })
   }
   // list.value = await podcastDB.items
   //   .where("")
   //   //.where('name').equals
   //   .toArray();
-});
+}
+
+watchEffect(() => {
+  if (id.value) {
+    fetchList()
+  }
+})
+
+const list = ref<IPodcastItem[]>([])
+//  podcastId =
+
+// fetchList()
 </script>
 
 <style></style>

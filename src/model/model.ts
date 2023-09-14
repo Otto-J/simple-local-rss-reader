@@ -1,65 +1,65 @@
-import type { IPodcastItem, Podcast } from "@/types";
-import { podcastDB } from "./db";
-import { Message } from "@arco-design/web-vue";
+import type { IPodcastItem, Podcast } from '@/types'
+import { podcastDB } from './db'
+import { Message } from '@arco-design/web-vue'
 
 // podcastDB;
 
 export const handleRawRssJson = (channel: any) => {
-  let podcastInfo: Podcast = {
+  const podcastInfo: Podcast = {
     title: channel.title,
     link: channel.link,
-    author: channel["itunes:author"],
+    author: channel['itunes:author'],
     extrInfo: {
-      category: channel?.["itunes:category"]?.text ?? "",
-      language: channel.language ?? "",
+      category: channel?.['itunes:category']?.text ?? '',
+      language: channel.language ?? ''
     },
     description: channel.description,
-    cover: channel["itunes:image"]?.href ?? "",
+    cover: channel['itunes:image']?.href ?? '',
     isPodcast: true,
-    remark: "",
+    remark: '',
     createTime: String(+new Date()),
-    updateTime: String(+new Date()),
-  };
+    updateTime: String(+new Date())
+  }
 
-  let podcastList: IPodcastItem[] = [];
-  (channel.item as any[]).forEach((i: any) => {
+  const podcastList: IPodcastItem[] = []
+  ;(channel.item as any[]).forEach((i: any) => {
     podcastList.push({
       title: i.title,
-      content: i["content:encoded"],
+      content: i['content:encoded'],
       pubDate: i.pubDate,
       link: i.link,
-      guid: i.guid["#text"],
-      cover: i["itunes:image"]?.href ?? "",
-      duration: i["itunes:duration"],
+      guid: i.guid['#text'],
+      cover: i['itunes:image']?.href ?? '',
+      duration: i['itunes:duration'],
       media: {
         length: i.enclosure.length,
         type: i.enclosure.type,
-        url: i.enclosure.url,
+        url: i.enclosure.url
       },
       updateTime: String(+new Date()),
-      podcastId: -1,
-    });
-  });
+      podcastId: -1
+    })
+  })
   return {
     podcastInfo,
-    podcastList,
-  };
-};
+    podcastList
+  }
+}
 
 export const addPodcast = async (channel: any) => {
-  const { podcastInfo, podcastList } = handleRawRssJson(channel);
+  const { podcastInfo, podcastList } = handleRawRssJson(channel)
   const res = await podcastDB.createPodcast({
-    ...podcastInfo,
-  });
-  console.log(1, res);
-  Message.success("订阅添加成功");
+    ...podcastInfo
+  })
+  console.log(1, res)
+  Message.success('订阅添加成功')
 
-  podcastDB.items.clear();
+  // podcastDB.items.clear()
 
   podcastList.forEach((i) => {
-    i.podcastId = res as number;
-  });
+    i.podcastId = res as number
+  })
 
-  podcastDB.items.bulkAdd(podcastList);
-  Message.success("列表添加成功");
-};
+  podcastDB.items.bulkAdd(podcastList)
+  Message.success('列表添加成功')
+}
