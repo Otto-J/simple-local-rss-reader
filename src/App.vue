@@ -13,7 +13,6 @@ import Layout from '@/components/layout.vue'
 import Sidebar from '@/components/sidebar.vue'
 import { provide, ref } from 'vue'
 import { defaultStatus } from '@/store/index'
-import { RouterView } from 'vue-router'
 
 const appStatus = ref(defaultStatus())
 

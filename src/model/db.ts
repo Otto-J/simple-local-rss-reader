@@ -1,6 +1,6 @@
 // db.ts
-import Dexie, { type Table } from "dexie";
-import type { IPodcastItem, Podcast, User, UserNote } from "../types";
+import Dexie, { type Table } from 'dexie'
+import type { IPodcastItem, Podcast, User, UserNote } from '../types'
 
 /**
  * 数据库 PodcastDB
@@ -10,12 +10,12 @@ import type { IPodcastItem, Podcast, User, UserNote } from "../types";
  * 表设计 userNotes 用户评论、笔记文本，关联 users.id items.id
  */
 
-const DBName = "PodcastDB";
+const DBName = 'PodcastDB'
 
-const TablePodcasts = "podcasts";
-const TableItems = "items";
-const TableUsers = "users";
-const TableUserNotes = "userNotes";
+const TablePodcasts = 'podcasts'
+const TableItems = 'items'
+const TableUsers = 'users'
+const TableUserNotes = 'userNotes'
 
 export class PodcastDB extends Dexie {
   // podcast info table
@@ -25,37 +25,42 @@ export class PodcastDB extends Dexie {
   // user info table
   [TableUsers]!: Table<User>;
   // user note info table
-  [TableUserNotes]!: Table<UserNote>;
+  [TableUserNotes]!: Table<UserNote>
 
   constructor() {
-    super(DBName);
+    super(DBName)
     // 设定索引
     this.version(1).stores({
-      [TablePodcasts]: "++id, title",
-      [TableItems]: "++id, title, podcastId",
-      [TableUsers]: "++id, name",
-      [TableUserNotes]: "++id,title",
-    });
+      [TablePodcasts]: '++id, title',
+      [TableItems]: '++id, title, podcastId',
+      [TableUsers]: '++id, name',
+      [TableUserNotes]: '++id,title'
+    })
   }
 
   createPodcast(info: any) {
     if (!info.createTime) {
-      info.createTime = String(+new Date());
+      info.createTime = String(+new Date())
     }
-    info.updateTime = String(+new Date());
+    info.updateTime = String(+new Date())
 
-    return this[TablePodcasts].add(info);
+    return this[TablePodcasts].add(info)
   }
 
   findPodcast({ page = 1, size = 10 }) {
     return this[TablePodcasts].offset((page - 1) * size)
       .limit(size)
-      .toArray();
+      .toArray()
   }
 
   deletePodcast(id: number) {
-    return this[TablePodcasts].where("id").equals(id).delete();
+    return this[TablePodcasts].where('id').equals(id).delete()
+  }
+  deleteItem(podcastId: number) {
+    return this[TableItems].where({
+      podcastId: podcastId
+    }).delete()
   }
 }
 
-export const podcastDB = new PodcastDB();
+export const podcastDB = new PodcastDB()

@@ -1,79 +1,77 @@
 <template>
-  <div>
-    <div class="flex px-2 py-2 justify-between items-center">
-      <RouterLink
-        :to="{
-          name: '/home'
-        }"
-      >
-        <h1 class="m-0 text-lg text-gray-900 dark:text-gray-100">RSS Reader</h1>
-      </RouterLink>
-      <div class="space-x-2 flex">
-        <CheckCircle :size="16" class="app_icon" />
-        <PlusCircle :size="16" class="app_icon" @click="addNewRSS" />
-        <!-- <IconMenu :size="16" class="app_icon" /> -->
-        <SidebarMenu />
-        <!-- <template> -->
-        <a-tooltip content="刷新">
-          <RefreshCw :size="16" class="app_icon" v-show="true" />
-          <RefreshCwOff v-show="false" />
-        </a-tooltip>
-        <!-- </template> -->
-
-        <!-- <a-tooltip content="明亮、暗黑模式切换"> -->
-        <ToggleTheme />
-        <!-- </a-tooltip> -->
-      </div>
-    </div>
-    <!-- 左侧分栏内容 -->
-
-    <a-list
-      :virtualListProps="{
-        height: '100%'
+  <div class="flex px-2 py-2 justify-between items-center">
+    <RouterLink
+      :to="{
+        name: '/home'
       }"
-      :data="podcastList"
     >
-      <template #item="{ item }">
-        <a-dropdown trigger="contextMenu" alignPoint @select="onSelect($event, item)">
-          <a-list-item class="hover:bg-slate-300 dark:hover:bg-slate-800" :key="item.id">
-            <RouterLink
-              :to="{
-                path: '/detail/' + item.id
-                // name: '/detail',
-                // params: {
-                //   id: item.id
-                // }
-              }"
-            >
-              <a-list-item-meta
-                :title="item.title ?? '--'"
-                :description="`上次更新${formatDate(item.updateTime) ?? '--'}`"
-              >
-                <!-- itunes:duration -->
-              </a-list-item-meta>
-            </RouterLink>
-            <template #actions>
-              <RefreshCw :size="12" class="app_icon"></RefreshCw>
+      <h1 class="m-0 text-lg text-gray-900 dark:text-gray-100">RSS Reader</h1>
+    </RouterLink>
+    <div class="space-x-2 flex">
+      <CheckCircle :size="16" class="app_icon" />
+      <PlusCircle :size="16" class="app_icon" @click="addNewRSS" />
+      <!-- <IconMenu :size="16" class="app_icon" /> -->
+      <SidebarMenu />
+      <!-- <template> -->
+      <a-tooltip content="刷新">
+        <RefreshCw :size="16" class="app_icon" v-show="true" />
+        <RefreshCwOff v-show="false" />
+      </a-tooltip>
+      <!-- </template> -->
 
-              <a-dropdown @select="onSelect($event, item)">
-                <MoreVertical :size="12" class="app_icon" />
-                <template #content>
-                  <a-doption v-for="item of itemOptions" :key="item.id" :value="item.value">
-                    {{ item.label }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-            </template>
-          </a-list-item>
-          <template #content>
-            <a-doption v-for="item of itemOptions" :key="item.id" :value="item.value">
-              {{ item.label }}
-            </a-doption>
-          </template>
-        </a-dropdown>
-      </template>
-    </a-list>
+      <!-- <a-tooltip content="明亮、暗黑模式切换"> -->
+      <ToggleTheme />
+      <!-- </a-tooltip> -->
+    </div>
   </div>
+  <!-- 左侧分栏内容 -->
+
+  <a-list
+    :virtualListProps="{
+      height: '100%'
+    }"
+    :data="podcastList"
+  >
+    <template #item="{ item }">
+      <a-dropdown trigger="contextMenu" alignPoint @select="onSelect($event, item)">
+        <a-list-item class="hover:bg-slate-300 dark:hover:bg-slate-800" :key="item.id">
+          <RouterLink
+            :to="{
+              path: '/detail/' + item.id
+              // name: '/detail',
+              // params: {
+              //   id: item.id
+              // }
+            }"
+          >
+            <a-list-item-meta
+              :title="item.title ?? '--'"
+              :description="`上次更新${formatDate(item.updateTime) ?? '--'}`"
+            >
+              <!-- itunes:duration -->
+            </a-list-item-meta>
+          </RouterLink>
+          <template #actions>
+            <RefreshCw :size="12" class="app_icon"></RefreshCw>
+
+            <a-dropdown @select="onSelect($event, item)">
+              <MoreVertical :size="12" class="app_icon" />
+              <template #content>
+                <a-doption v-for="item of itemOptions" :key="item.id" :value="item.value">
+                  {{ item.label }}
+                </a-doption>
+              </template>
+            </a-dropdown>
+          </template>
+        </a-list-item>
+        <template #content>
+          <a-doption v-for="item of itemOptions" :key="item.id" :value="item.value">
+            {{ item.label }}
+          </a-doption>
+        </template>
+      </a-dropdown>
+    </template>
+  </a-list>
 </template>
 <script lang="ts" setup>
 import { CheckCircle, PlusCircle, RefreshCw, RefreshCwOff, MoreVertical } from 'lucide-vue-next'
@@ -121,8 +119,9 @@ const itemOptions = [
 const onSelect = async (event: any, item: any) => {
   console.log('on select', event, item)
   if (event === 'delete') {
-    await podcastDB.deletePodcast(item.id)
-    await fetchList()
+    Promise.all([podcastDB.deletePodcast(item.id), podcastDB.deleteItem(item.id)]).then(() => {
+      fetchList()
+    })
   }
 }
 

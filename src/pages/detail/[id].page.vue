@@ -1,36 +1,44 @@
 <template>
-  <div class="w-full p-4 dark:text-slate-100 text-slate-900">
-    <a-list
-      :virtualListProps="{
-        height: '90vh'
-      }"
-      :data="list"
-    >
-      <template #item="{ item }">
-        <a-list-item :key="item.id" class="hover:bg-slate-800">
-          <a-list-item-meta :title="item.title" :description="item.description">
-            <!-- <template #avatar>
+  <div class="w-full h-screen flex flex-col p-4 dark:text-slate-100 text-slate-900">
+    <div class="mb-4 text-lg flex-shrink-0">{{ title }}</div>
+    <div class="flex-grow h-full">
+      <a-list
+        :virtualListProps="{
+          height: '90vh'
+        }"
+        :data="list"
+      >
+        <template #item="{ item }">
+          <router-link
+            :to="{
+              name: '/info/[id]',
+              params: {
+                id: `${item.podcastId}__${item.guid}`
+              }
+            }"
+          >
+            <a-list-item :key="item.id" class="hover:bg-slate-200 dark:hover:bg-slate-800">
+              <a-list-item-meta :title="item.title" :description="item.description">
+                <!-- <template #avatar>
             <a-avatar shape="square">
               A
             </a-avatar>
           </template> -->
-          </a-list-item-meta>
-          <template #actions>
-            <span>{{ formatDateTime(item.pubDate) }}</span>
-          </template>
-        </a-list-item>
-      </template>
-    </a-list>
+              </a-list-item-meta>
+              <template #actions>
+                <span>{{ formatDateTime(item.pubDate) }}</span>
+              </template>
+            </a-list-item>
+          </router-link>
+        </template>
+      </a-list>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { podcastDB } from '@/model/db'
 import type { IPodcastItem } from '@/types'
-import { Message } from '@arco-design/web-vue'
-import { computed, ref } from 'vue'
 import { formatDateTime } from '@/utils/data-format'
-import { useRoute } from 'vue-router'
-import { watchEffect } from 'vue'
 
 const route = useRoute()
 
@@ -62,9 +70,20 @@ const fetchList = async () => {
   //   .toArray();
 }
 
+const title = ref('')
+
+const basicInfo = async () => {
+  if (id.value) {
+    const res = await podcastDB.podcasts.where('id').equals(id.value).first()
+    console.log('basic', res)
+    title.value = res?.title ?? ''
+  }
+}
+
 watchEffect(() => {
   if (id.value) {
     fetchList()
+    basicInfo()
   }
 })
 

@@ -25,7 +25,7 @@ export const handleRawRssJson = (channel: any) => {
   ;(channel.item as any[]).forEach((i: any) => {
     podcastList.push({
       title: i.title,
-      content: i['content:encoded'],
+      content: i['content:encoded'] ?? i.description,
       pubDate: i.pubDate,
       link: i.link,
       guid: i.guid['#text'],

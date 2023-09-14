@@ -18,9 +18,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
-import axios from 'axios'
-import { Message } from '@arco-design/web-vue'
 import { blobToString, parseStringAsXML } from '@/utils/data-format'
 import { addPodcast } from '@/model/model'
 
