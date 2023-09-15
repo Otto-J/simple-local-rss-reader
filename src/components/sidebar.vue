@@ -141,9 +141,3 @@ onMounted(() => {
   fetchList()
 })
 </script>
-
-<style>
-.app_icon {
-  @apply text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer;
-}
-</style>

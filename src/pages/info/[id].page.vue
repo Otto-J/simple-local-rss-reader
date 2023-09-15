@@ -1,15 +1,8 @@
 <template>
   <div class="p-4">
     <div class="flex justify-start items-center space-x-2 mb-4">
-      <ArrowLeft
-        :size="18"
-        class="cursor-pointer text-slate-900 hover:text-slate-700 dark:hover:text-slate-100 dark:text-slate-300"
-        @click="$router.back"
-      />
-      <span
-        class="text-slate-900 hover:text-slate-700 dark:hover:text-slate-100 dark:text-slate-300"
-        >RSS 详情</span
-      >
+      <ArrowLeft :size="18" class="cursor-pointer style-text-feedback" @click="$router.back" />
+      <span class="text-slate-900 style-text-feedback">RSS 详情</span>
     </div>
     <a-descriptions title="" layout="inline-horizontal">
       <a-descriptions-item label="from"> {{ podcastInfo?.title }} </a-descriptions-item>
@@ -35,7 +28,7 @@
 <script lang="ts" setup>
 import { podcastDB } from '@/model/db'
 import type { IPodcastItem, Podcast } from '@/types'
-import { formatDate, formatDateTime } from '@/utils/data-format'
+import { formatDateTime } from '@/utils/data-format'
 import { ArrowLeft } from 'lucide-vue-next'
 
 import audioPlayer from '@/components/audio-player.vue'

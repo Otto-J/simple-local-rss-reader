@@ -1,7 +1,15 @@
-/* @import "./base.css"; */
-
 /* comment */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.style-text-feedback {
+  @apply text-slate-900 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-100;
+}
+.app_icon {
+  @apply style-text-feedback cursor-pointer;
+}
+.style-bg-feedback {
+  @apply dark:text-slate-900 dark:hover:text-slate-700 text-slate-300 hover:text-slate-100;
+}

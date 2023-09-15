@@ -1,6 +1,9 @@
 <template>
-  <div class="w-full h-screen flex flex-col p-4 dark:text-slate-100 text-slate-900">
-    <div class="mb-4 text-lg flex-shrink-0">{{ title }}</div>
+  <div class="w-full h-screen flex flex-col p-4">
+    <div class="mb-4 text-lg flex-shrink-0 flex justify-between items-center">
+      <span class="style-text-feedback">{{ title }}</span>
+      <CheckCheck class="style-text-feedback cursor-pointer" />
+    </div>
     <div class="flex-grow h-full">
       <a-list
         :virtualListProps="{
@@ -17,8 +20,14 @@
               }
             }"
           >
-            <a-list-item :key="item.id" class="hover:bg-slate-200 dark:hover:bg-slate-800">
-              <a-list-item-meta :title="item.title" :description="item.description">
+            <a-list-item :key="item.id" class="hover:bg-slate-300 dark:hover:bg-slate-800">
+              <a-list-item-meta :description="item.description">
+                <template #title>
+                  <div class="flex items-center space-x-2">
+                    <a-badge color="red" />
+                    <span class="font-bold"> {{ item.title }}</span>
+                  </div>
+                </template>
                 <!-- <template #avatar>
             <a-avatar shape="square">
               A
@@ -39,6 +48,7 @@
 import { podcastDB } from '@/model/db'
 import type { IPodcastItem } from '@/types'
 import { formatDateTime } from '@/utils/data-format'
+import { CheckCheck } from 'lucide-vue-next'
 
 const route = useRoute()
 
