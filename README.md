@@ -9,7 +9,7 @@ wip，草稿阶段，验证想法。
 - [x] 填写 url 实时拉取、解析列表
 - [x] 数据持久化到 indexedDB 中
 - [x] 实现列表页，多 rss 源
-- [ ] 已读标记
+- [x] 已读标记
 - [ ] optional ai 总结 description 内容
 - [ ] 美化样式
 - [ ] 区分文章、播客
