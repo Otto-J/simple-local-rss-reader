@@ -59,6 +59,7 @@ export interface StoryPodcast {
   guid: string
   createTime?: string
   updateTime?: string
+  isRead?: boolean
 
   media: {
     length: string

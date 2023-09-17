@@ -2,7 +2,7 @@
   <div id="detail-id" class="w-full h-screen flex flex-col">
     <div class="mb-4 text-lg flex-shrink-0 flex justify-between items-center">
       <span class="style-text-feedback">{{ title }}</span>
-      <CheckCheck class="style-text-feedback cursor-pointer" />
+      <CheckCheck @click="setReadAll" class="style-text-feedback cursor-pointer" />
     </div>
     <div class="flex-grow h-full">
       <a-list
@@ -121,6 +121,22 @@ watch(
 )
 
 const list = ref<StoryPodcast[]>([])
+
+const setReadAll = async () => {
+  // const userId = getUserId()
+  const unreadList = list.value.filter((item) => !item.isRead).map((item) => item.guid)
+  console.log(unreadList)
+
+  const userId = await getUserId()
+  if (userId === -1) {
+    return
+  }
+  const feedId = id.value
+
+  await podcastDB.markStoryRead(userId, feedId, unreadList)
+
+  fetchList()
+}
 </script>
 
 <style></style>

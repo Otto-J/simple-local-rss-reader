@@ -1,6 +1,8 @@
 <template>
-  <div id="info-id" class="p-4 h-full flex flex-col">
-    <div class="flex justify-start items-center space-x-2 mb-4">
+  <div id="info-id" class="p-4 h-full flex flex-col relative">
+    <div
+      class="flex justify-start items-center space-x-2 mb-4 sticky top-0 left-0 z-10 bg-slate-50 dark:bg-slate-900 py-4"
+    >
       <ArrowLeft :size="18" class="cursor-pointer style-text-feedback" @click="$router.back" />
       <span class="text-slate-900 style-text-feedback">RSS 详情</span>
     </div>

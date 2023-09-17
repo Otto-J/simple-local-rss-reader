@@ -116,6 +116,17 @@ export class PodcastDB extends Dexie {
         })
     } else {
       // 批量设置已读
+      const list = storyId.map((id) => {
+        return {
+          userId,
+          storyId: id,
+          feedId,
+          createTime: String(+new Date()),
+          updateTime: String(+new Date())
+        }
+      })
+
+      return this[TableUserRead].bulkAdd(list)
     }
   }
 }
