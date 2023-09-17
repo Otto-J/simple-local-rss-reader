@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen flex flex-col p-4">
+  <div id="detail-id" class="w-full h-screen flex flex-col">
     <div class="mb-4 text-lg flex-shrink-0 flex justify-between items-center">
       <span class="style-text-feedback">{{ title }}</span>
       <CheckCheck class="style-text-feedback cursor-pointer" />
@@ -8,15 +8,16 @@
       <a-list
         :virtualListProps="{
           height: '90vh'
+          // height: 'content-fit'
         }"
         :data="list"
       >
         <template #item="{ item }">
           <router-link
             :to="{
-              name: '/info/[id]',
+              name: '/story/[storyId]',
               params: {
-                id: `${item.podcastId}__${item.guid}`
+                storyId: `${item.feedId}__${item.guid}`
               }
             }"
           >
@@ -24,7 +25,8 @@
               <a-list-item-meta :description="item.description">
                 <template #title>
                   <div class="flex items-center space-x-2">
-                    <a-badge color="red" />
+                    <a-badge v-if="!item.isRead" color="red" />
+                    <a-badge v-else color="green" />
                     <span class="font-bold"> {{ item.title }}</span>
                   </div>
                 </template>
@@ -41,61 +43,77 @@
 </template>
 <script lang="ts" setup>
 import { podcastDB } from '@/model/db'
-import type { IPodcastItem } from '@/types'
+import { getUserId } from '@/model/model'
+import type { StoryPodcast } from '@/types'
 import { formatDateTime } from '@/utils/data-format'
 import { CheckCheck } from 'lucide-vue-next'
 
 const route = useRoute()
 
 const id = computed(() => {
-  const _id = (route.params as any).id as string
-  if (typeof Number(_id) === 'number') {
-    return Number(_id)
-  }
-  return _id
+  const _id = (route.params as any).feedId as string
+
+  return Number(_id)
 })
 
+// 进入列表，有可能按照时间排序，也可以按照未读排序，这里默认按照时间排序
+
 const fetchList = async () => {
-  if (id.value) {
+  const userId = await getUserId()
+  if (userId === -1) {
+    return
+  }
+  const feedId = id.value
+
+  if (feedId) {
+    const userReadListByFeed = await podcastDB.userRead
+      .where({
+        userId: userId,
+        feedId: feedId
+      })
+      .toArray()
+
     podcastDB.items
-      .where('podcastId')
-      .equals(id.value)
+      .where({ feedId: feedId })
       .toArray()
       .then((res) => {
-        console.log(55, res)
-        list.value = res
+        // console.log(55, res)
+        // debugger
+        list.value = res.map((item) => {
+          return {
+            ...item,
+            isRead: userReadListByFeed.some((i) => i.storyId === item.guid)
+          }
+        })
       })
       .catch((err) => {
         Message.error(err)
       })
   }
-  // list.value = await podcastDB.items
-  //   .where("")
-  //   //.where('name').equals
-  //   .toArray();
 }
 
 const title = ref('')
 
 const basicInfo = async () => {
   if (id.value) {
-    const res = await podcastDB.podcasts.where('id').equals(id.value).first()
+    const res = await podcastDB.feeds.where('id').equals(id.value).first()
     console.log('basic', res)
     title.value = res?.title ?? ''
   }
 }
 
-watchEffect(() => {
-  if (id.value) {
+watch(
+  () => id,
+  () => {
     fetchList()
     basicInfo()
+  },
+  {
+    immediate: true
   }
-})
+)
 
-const list = ref<IPodcastItem[]>([])
-//  podcastId =
-
-// fetchList()
+const list = ref<StoryPodcast[]>([])
 </script>
 
 <style></style>

@@ -35,7 +35,7 @@ layout 分成左右两列，只有右边变化
 - `/ -> home` init
   - `home` blank page
   - `list` a podcast list
-  - `add-rss` add new rss
+  - `add-feed` add new rss
   - `export-and-import` export/import
   - `settings`
 

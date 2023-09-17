@@ -1,4 +1,4 @@
-import type { IPodcastItem, Podcast } from '@/types'
+import type { StoryPodcast, Feed } from '@/types'
 import { podcastDB } from './db'
 import { Message } from '@arco-design/web-vue'
 import { blobToString, parseStringAsXML } from '@/utils/data-format'
@@ -6,7 +6,7 @@ import { blobToString, parseStringAsXML } from '@/utils/data-format'
 // podcastDB;
 
 export const handleRawRssJson = (channel: any, rss: string) => {
-  const podcastInfo: Podcast = {
+  const podcastInfo: Feed = {
     title: channel.title,
     link: channel.link,
     author: channel['itunes:author'],
@@ -23,15 +23,16 @@ export const handleRawRssJson = (channel: any, rss: string) => {
     rss
   }
 
-  const podcastList: IPodcastItem[] = []
+  const podcastList: StoryPodcast[] = []
 
   ;(channel.item as any[]).forEach((i: any) => {
+    // debugger
     podcastList.push({
       title: i.title,
       content: i['content:encoded'] ?? i.description,
       pubDate: i.pubDate,
       link: i.link,
-      guid: i.guid?.['#text'],
+      guid: String(i.guid?.['#text']),
       cover: i['itunes:image']?.href ?? '',
       duration: i['itunes:duration'],
       media: {
@@ -40,7 +41,7 @@ export const handleRawRssJson = (channel: any, rss: string) => {
         url: i.enclosure.url
       },
       updateTime: String(+new Date()),
-      podcastId: -1
+      feedId: -1
     })
   })
   return {
@@ -53,20 +54,19 @@ export const addPodcast = async (channel: any, rss: string) => {
   try {
     const { podcastInfo, podcastList } = handleRawRssJson(channel, rss)
 
-    const isExist = await podcastDB.podcasts.where('rss').equals(rss).first()
+    const isExist = await podcastDB.feeds.where('rss').equals(rss).first()
 
     if (isExist && isExist.id) {
       // 清除原有数据
-      podcastDB.items.where('podcastId').equals(isExist.id).delete()
+      podcastDB.items.where('feedId').equals(isExist.id).delete()
 
-      podcastDB.podcasts.where('id').equals(isExist.id).delete()
+      podcastDB.feeds.where('id').equals(isExist.id).delete()
 
       Message.success('订阅清理成功')
     }
     // 增加
     const res = await podcastDB.createPodcast({
-      ...podcastInfo,
-      rss
+      ...podcastInfo
     })
     console.log(1, res)
     Message.success('订阅添加成功')
@@ -74,7 +74,7 @@ export const addPodcast = async (channel: any, rss: string) => {
     // podcastDB.items.clear()
 
     podcastList.forEach((i) => {
-      i.podcastId = res as number
+      i.feedId = res as number
     })
 
     podcastDB.items.bulkAdd(podcastList)
@@ -149,4 +149,16 @@ export const useParseRss = () => {
     parseXMLByUrl,
     addLoading
   }
+}
+
+export const getUserId = async () => {
+  const user = 'root'
+  let id: number = -1
+  const userInfo = await podcastDB.users.where({ name: user }).first()
+  if (userInfo?.id) {
+    id = userInfo.id
+  } else {
+    Message.error('用户不存在')
+  }
+  return id
 }

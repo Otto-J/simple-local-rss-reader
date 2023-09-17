@@ -18,10 +18,3 @@ const appStatus = ref(defaultStatus())
 
 provide('appStatus', appStatus)
 </script>
-
-<style>
-html,
-body {
-  @apply dark:bg-slate-900;
-}
-</style>

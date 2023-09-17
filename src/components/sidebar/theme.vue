@@ -1,72 +1,31 @@
 <template>
   <a-tooltip content="明亮、暗黑模式切换">
-    <MoonStar
-      :size="16"
-      class="app_icon"
-      v-if="!isDark"
-      @click="setTheme('dark')"
-    />
-    <Sun :size="16" class="app_icon" v-else @click="setTheme('light')" />
+    <MoonStar :size="16" class="app_icon" v-if="!isDark" @click="toggleDark(true)" />
+    <Sun :size="16" class="app_icon" v-else @click="toggleDark(false)" />
   </a-tooltip>
 </template>
 <script lang="ts" setup>
-import { MoonStar, Sun } from "lucide-vue-next";
+import { MoonStar, Sun } from 'lucide-vue-next'
+import { useDark, useToggle, useEventListener } from '@vueuse/core'
+import { watchEffect } from 'vue'
 
-import { onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+const isDark = useDark({
+  selector: 'html'
+})
 
-const isDark = ref(false);
-
-// 监听 prefers-color-scheme
-onMounted(() => {
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => {
-      setTheme(e.matches ? "dark" : "light");
-    });
-
-  setTheme("auto");
-});
-
-onUnmounted(() => {
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .removeEventListener("change", (e) => {
-      setTheme(e.matches ? "dark" : "light");
-    });
-});
-
-watch(
-  () => isDark,
-  (val) => {
-    setTheme(val ? "dark" : "light");
+useEventListener(
+  window.matchMedia('(prefers-color-scheme: dark)'),
+  'change',
+  (e: MediaQueryListEvent) => {
+    isDark.value = !!e.matches
   }
-);
+)
 
-const setTheme = (mode: "dark" | "light" | "auto") => {
-  if (mode === "auto") {
-    const isPresetDark =
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+watchEffect(() => {
+  document.body.setAttribute('arco-theme', isDark.value ? 'dark' : 'light')
+})
 
-    if (isPresetDark) {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-    // return;
-  } else if (mode === "dark") {
-    document.documentElement.classList.add(mode);
-    isDark.value = true;
-    localStorage.setItem("theme", mode);
-    document.body.setAttribute("arco-theme", mode);
-  } else {
-    document.documentElement.classList.remove("dark");
-    isDark.value = false;
-    localStorage.setItem("theme", "light");
-    document.body.setAttribute("arco-theme", "light");
-  }
-};
+const toggleDark = useToggle(isDark)
 </script>
 
 <style></style>

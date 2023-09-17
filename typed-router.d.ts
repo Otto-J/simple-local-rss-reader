@@ -40,14 +40,14 @@ import type {
 declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
-    '/add-rss': RouteRecordInfo<'/add-rss', '/add-rss', Record<never, never>, Record<never, never>>,
-    '/detail': RouteRecordInfo<'/detail', '/detail', Record<never, never>, Record<never, never>>,
-    '/detail/': RouteRecordInfo<'/detail/', '/detail', Record<never, never>, Record<never, never>>,
-    '/detail/[id]': RouteRecordInfo<'/detail/[id]', '/detail/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/add-feed': RouteRecordInfo<'/add-feed', '/add-feed', Record<never, never>, Record<never, never>>,
+    '/feed': RouteRecordInfo<'/feed', '/feed', Record<never, never>, Record<never, never>>,
+    '/feed/': RouteRecordInfo<'/feed/', '/feed', Record<never, never>, Record<never, never>>,
+    '/feed/[feedId]': RouteRecordInfo<'/feed/[feedId]', '/feed/:feedId', { feedId: ParamValue<true> }, { feedId: ParamValue<false> }>,
     '/home': RouteRecordInfo<'/home', '/home', Record<never, never>, Record<never, never>>,
-    '/info': RouteRecordInfo<'/info', '/info', Record<never, never>, Record<never, never>>,
-    '/info/': RouteRecordInfo<'/info/', '/info', Record<never, never>, Record<never, never>>,
-    '/info/[id]': RouteRecordInfo<'/info/[id]', '/info/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/story': RouteRecordInfo<'/story', '/story', Record<never, never>, Record<never, never>>,
+    '/story/': RouteRecordInfo<'/story/', '/story', Record<never, never>, Record<never, never>>,
+    '/story/[storyId]': RouteRecordInfo<'/story/[storyId]', '/story/:storyId', { storyId: ParamValue<true> }, { storyId: ParamValue<false> }>,
   }
 }
 

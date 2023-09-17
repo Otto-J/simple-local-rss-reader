@@ -17,15 +17,18 @@ const getMinsList = () => {
 
       author: 'xx',
       description: '第' + i + '分钟',
-      guid: i,
+      guid: {
+        '@@isPermaLink': false,
+        '#text': i
+      },
       cover: '',
       category: {
         text: 'x'
       },
       enclosure: {
-        length: 1,
-        type: 'audio/mpeg',
-        url: 'https://www.baidu.com'
+        '@@length': 1,
+        '@@type': 'audio/mpeg',
+        '@@url': 'https://www.baidu.com'
       }
     })
   }
@@ -37,7 +40,10 @@ const router = createRouter()
   .get(
     '/',
     eventHandler((event) => {
-      const builder = new XMLBuilder()
+      const builder = new XMLBuilder({
+        ignoreAttributes: false,
+        attributeNamePrefix: '@@'
+      })
       const xmlContent = builder.build({
         rss: {
           channel: {

@@ -1,6 +1,6 @@
 // db.ts
 import Dexie, { type Table } from 'dexie'
-import type { IPodcastItem, Podcast, User, UserNote } from '../types'
+import type { StoryPodcast, Feed, User, UserNote, UserRead } from '../types'
 
 /**
  * 数据库 PodcastDB
@@ -12,29 +12,33 @@ import type { IPodcastItem, Podcast, User, UserNote } from '../types'
 
 const DBName = 'PodcastDB'
 
-const TablePodcasts = 'podcasts'
+const TableFeed = 'feeds'
 const TableItems = 'items'
 const TableUsers = 'users'
 const TableUserNotes = 'userNotes'
+const TableUserRead = 'userRead'
 
 export class PodcastDB extends Dexie {
   // podcast info table
-  [TablePodcasts]!: Table<Podcast>;
+  [TableFeed]!: Table<Feed>;
   // podcastItem info table
-  [TableItems]!: Table<IPodcastItem>;
+  [TableItems]!: Table<StoryPodcast>;
   // user info table
   [TableUsers]!: Table<User>;
   // user note info table
-  [TableUserNotes]!: Table<UserNote>
+  [TableUserNotes]!: Table<UserNote>;
+  // user read info table
+  [TableUserRead]!: Table<UserRead>
 
   constructor() {
     super(DBName)
     // 设定索引
     this.version(1).stores({
-      [TablePodcasts]: '++id, title,rss',
-      [TableItems]: '++id, title, podcastId',
-      [TableUsers]: '++id, name',
-      [TableUserNotes]: '++id,title'
+      [TableFeed]: '++id, title,rss',
+      [TableItems]: '++id, title, feedId,[feedId+guid]',
+      [TableUsers]: '++id, name,[feedId+storyId]',
+      [TableUserNotes]: '++id,title',
+      [TableUserRead]: '++id,userId,feedId,storyId,[userId+feedId+storyId]'
     })
   }
 
@@ -44,29 +48,29 @@ export class PodcastDB extends Dexie {
     }
     info.updateTime = String(+new Date())
 
-    return this[TablePodcasts].add(info)
+    return this[TableFeed].add(info)
   }
 
   refreshPodcast(id: number) {
-    this.transaction('rw', this[TablePodcasts], this[TableItems], async (tx) => {
-      // 清空 podcastId 对应的 items
-      await this[TableItems].where('podcastId').equals(id).delete()
+    this.transaction('rw', this[TableFeed], this[TableItems], async (tx) => {
+      // 清空 对应的 items
+      await this[TableItems].where('feedId').equals(id).delete()
       // 重新获取
     })
   }
 
   findPodcast({ page = 1, size = 10 }) {
-    return this[TablePodcasts].offset((page - 1) * size)
+    return this[TableFeed].offset((page - 1) * size)
       .limit(size)
       .toArray()
   }
 
   deletePodcast(id: number) {
-    return this[TablePodcasts].where('id').equals(id).delete()
+    return this[TableFeed].where('id').equals(id).delete()
   }
-  deleteItem(podcastId: number) {
+  deleteItem(feedId: number) {
     return this[TableItems].where({
-      podcastId: podcastId
+      feedId: feedId
     }).delete()
   }
 
@@ -87,18 +91,28 @@ export class PodcastDB extends Dexie {
     }
   }
 
-  markRead(userId: number, podcastId: number, itemId: string | string[]) {
-    if (!Array.isArray(itemId)) {
+  markStoryRead(userId: number, feedId: number, storyId: string | string[]) {
+    if (!Array.isArray(storyId)) {
       // 单个设置已读
-      // 放入 user 表
-      this[TableUsers].where('id')
-        .equals(userId)
-        .modify((x) => {
-          x.readList.push({
-            podcastId: podcastId,
-            infoId: itemId,
-            updateTime: String(+new Date())
-          })
+      this[TableUserRead].where({
+        userId,
+        storyId,
+        feedId
+      })
+        .first()
+        .then((res) => {
+          if (res) {
+            // 已存在
+          } else {
+            // 不存在
+            this[TableUserRead].add({
+              userId,
+              storyId,
+              feedId,
+              createTime: String(+new Date()),
+              updateTime: String(+new Date())
+            })
+          }
         })
     } else {
       // 批量设置已读

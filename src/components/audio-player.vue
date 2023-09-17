@@ -1,5 +1,6 @@
 <template>
   <div
+    id="audio-player"
     class="w-full h-16 text-slate-200 bg-slate-700 flex items-center justify-between rounded-md px-4"
   >
     <video ref="videoRef" :src="props.url" class="hidden" :controls="false"></video>

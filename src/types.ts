@@ -1,4 +1,4 @@
-export interface Podcast {
+export interface Feed {
   id?: number
   title: string
   link: string
@@ -20,8 +20,8 @@ export interface User {
   id?: number
   name: string
   readList: Array<{
-    podcastId: number
-    infoId: string
+    feedId: number
+    storyId: string
     updateTime: string
   }>
   createTime: string
@@ -39,7 +39,16 @@ export interface UserNote {
   itemId: string
 }
 
-export interface IPodcastItem {
+export interface UserRead {
+  id?: number //
+  userId: number
+  feedId: number
+  storyId: string
+  createTime: string
+  updateTime: string
+}
+
+export interface StoryPodcast {
   id?: number
   title: string
   content: string
@@ -57,5 +66,5 @@ export interface IPodcastItem {
     url: string
   }
   // relation
-  podcastId: number
+  feedId: number
 }
