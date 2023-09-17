@@ -57,6 +57,28 @@ const postInfo = computed(() => {
   }
 })
 
+onMounted(() => {
+  markRead()
+})
+
+// 进入页面立刻设置已读
+const markRead = async () => {
+  let userId = null
+  const user = await podcastDB.users
+    .where({
+      // 用户身份验证
+      name: 'root'
+    })
+    .first()
+  if (!user) {
+    return
+  }
+
+  userId = user.id as number
+
+  await podcastDB.markRead(userId, Number(postInfo.value.podcastId), postInfo.value.postId)
+}
+
 const parseInfo = (podcastId: string) => {
   podcastDB.podcasts
     .get({

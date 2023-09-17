@@ -28,11 +28,6 @@
                     <span class="font-bold"> {{ item.title }}</span>
                   </div>
                 </template>
-                <!-- <template #avatar>
-            <a-avatar shape="square">
-              A
-            </a-avatar>
-          </template> -->
               </a-list-item-meta>
               <template #actions>
                 <span>{{ formatDateTime(item.pubDate) }}</span>

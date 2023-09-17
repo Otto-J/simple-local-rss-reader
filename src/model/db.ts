@@ -31,7 +31,7 @@ export class PodcastDB extends Dexie {
     super(DBName)
     // 设定索引
     this.version(1).stores({
-      [TablePodcasts]: '++id, title',
+      [TablePodcasts]: '++id, title,rss',
       [TableItems]: '++id, title, podcastId',
       [TableUsers]: '++id, name',
       [TableUserNotes]: '++id,title'
@@ -47,6 +47,14 @@ export class PodcastDB extends Dexie {
     return this[TablePodcasts].add(info)
   }
 
+  refreshPodcast(id: number) {
+    this.transaction('rw', this[TablePodcasts], this[TableItems], async (tx) => {
+      // 清空 podcastId 对应的 items
+      await this[TableItems].where('podcastId').equals(id).delete()
+      // 重新获取
+    })
+  }
+
   findPodcast({ page = 1, size = 10 }) {
     return this[TablePodcasts].offset((page - 1) * size)
       .limit(size)
@@ -60,6 +68,41 @@ export class PodcastDB extends Dexie {
     return this[TableItems].where({
       podcastId: podcastId
     }).delete()
+  }
+
+  async initUser() {
+    //  考虑纯单机版实现
+    const isExists = await this[TableUsers].count()
+    if (isExists > 0) {
+      // 已存在
+      console.log('已存在 不需要初始化')
+    } else {
+      // 不存在
+      this[TableUsers].add({
+        name: 'root',
+        readList: [],
+        createTime: String(+new Date()),
+        updateTime: String(+new Date())
+      })
+    }
+  }
+
+  markRead(userId: number, podcastId: number, itemId: string | string[]) {
+    if (!Array.isArray(itemId)) {
+      // 单个设置已读
+      // 放入 user 表
+      this[TableUsers].where('id')
+        .equals(userId)
+        .modify((x) => {
+          x.readList.push({
+            podcastId: podcastId,
+            infoId: itemId,
+            updateTime: String(+new Date())
+          })
+        })
+    } else {
+      // 批量设置已读
+    }
   }
 }
 

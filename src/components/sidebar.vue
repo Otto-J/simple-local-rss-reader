@@ -14,8 +14,10 @@
       <SidebarMenu />
       <!-- <template> -->
       <a-tooltip content="刷新">
-        <RefreshCw :size="16" class="app_icon" v-show="true" />
-        <RefreshCwOff v-show="false" />
+        <div>
+          <RefreshCw :size="16" class="app_icon" v-show="true" />
+          <RefreshCwOff v-show="false" />
+        </div>
       </a-tooltip>
       <!-- </template> -->
 
@@ -52,7 +54,9 @@
             </a-list-item-meta>
           </RouterLink>
           <template #actions>
-            <RefreshCw :size="12" class="app_icon"></RefreshCw>
+            <div @click="refreshPodcast(item.id)">
+              <RefreshCw :size="12" class="app_icon"></RefreshCw>
+            </div>
 
             <a-dropdown @select="onSelect($event, item)">
               <MoreVertical :size="12" class="app_icon" />
@@ -83,6 +87,7 @@ import { onMounted } from 'vue'
 import { formatDate } from '@/utils/data-format'
 import ToggleTheme from './sidebar/theme.vue'
 import { useRouter } from 'vue-router/auto'
+import { addPodcast, useParseRss } from '@/model/model'
 
 const router = useRouter()
 
@@ -115,6 +120,19 @@ const itemOptions = [
     value: 'delete'
   }
 ]
+const { parseXMLByUrl, addLoading } = useParseRss()
+
+const refreshPodcast = (id: number) => {
+  console.log('手动刷新', id)
+  // 后面用事务
+  podcastDB.podcasts.get(id).then((res) => {
+    if (!res) {
+      return
+    }
+    const link = res.rss
+    return parseXMLByUrl(link)
+  })
+}
 
 const onSelect = async (event: any, item: any) => {
   console.log('on select', event, item)

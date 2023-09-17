@@ -42,7 +42,15 @@ layout 分成左右两列，只有右边变化
 ## 表设计
 
 - 数据库 PodcastDB
+
   - 表设计 podcasts 栏目基础信息维护
   - 表设计 items 栏目 rss 内容，数量较大，无状态，通过 podcasts.id 关联
   - 表设计 users 用户默认 root 已读状态关联 items.uuid
   - 表设计 userNotes 用户评论、笔记文本，关联 users.id items.id
+
+- users []
+  - readList: number[]
+  - username:string
+  - avatar: string
+  - createTime
+  - updateTime
