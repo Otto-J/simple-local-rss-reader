@@ -21,13 +21,19 @@
               }
             }"
           >
-            <a-list-item :key="item.id" class="hover:bg-slate-300 dark:hover:bg-slate-800">
+            <a-list-item
+              :key="item.id"
+              class="hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900"
+            >
               <a-list-item-meta :description="item.description">
                 <template #title>
                   <div class="flex items-center space-x-2">
                     <a-badge v-if="!item.isRead" color="red" />
-                    <a-badge v-else color="green" />
-                    <span class="font-bold"> {{ item.title }}</span>
+                    <a-badge v-else color="transparent" />
+                    <div class="">
+                      <span v-if="!item.isRead" class="font-bold"> {{ item.title }}</span>
+                      <span v-else> {{ item.title }}</span>
+                    </div>
                   </div>
                 </template>
               </a-list-item-meta>
@@ -103,8 +109,9 @@ const basicInfo = async () => {
 }
 
 watch(
-  () => id,
+  () => id.value,
   () => {
+    console.log('id changed')
     fetchList()
     basicInfo()
   },

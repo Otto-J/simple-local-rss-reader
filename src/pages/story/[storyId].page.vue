@@ -6,6 +6,7 @@
     </div>
     <a-descriptions title="" layout="inline-horizontal">
       <a-descriptions-item label="from"> {{ feedInfo?.title }} </a-descriptions-item>
+      <a-descriptions-item label="原始链接"> {{ feedInfo?.link }} </a-descriptions-item>
     </a-descriptions>
     <div class="mt-4 flex-auto">
       <article class="prose prose-slate dark:prose-invert w-full max-w-full">
@@ -13,6 +14,7 @@
         <p>update: {{ formatDateTime(storyInfo?.pubDate ?? '') }}</p>
         <div class="max-w-2xl mx-auto">
           <audioPlayer
+            v-if="feedInfo?.isPodcast"
             :url="storyInfo?.media.url"
             :duration="storyInfo?.duration"
             :title="storyInfo?.title"

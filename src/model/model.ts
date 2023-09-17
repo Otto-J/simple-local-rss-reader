@@ -11,12 +11,15 @@ export const handleRawRssJson = (channel: any, rss: string) => {
     link: channel.link,
     author: channel['itunes:author'],
     extrInfo: {
-      category: channel?.['itunes:category']?.text ?? '',
+      // 可能是数组
+      category: Array.isArray(channel?.['itunes:category'])
+        ? channel?.['itunes:category'].map((i: any) => i.text).join(',')
+        : channel?.['itunes:category']?.text ?? '',
       language: channel.language ?? ''
     },
     description: channel.description,
     cover: channel['itunes:image']?.href ?? '',
-    isPodcast: true,
+    isPodcast: !!channel['itunes:author'],
     remark: '',
     createTime: String(+new Date()),
     updateTime: String(+new Date()),
@@ -36,9 +39,9 @@ export const handleRawRssJson = (channel: any, rss: string) => {
       cover: i['itunes:image']?.href ?? '',
       duration: i['itunes:duration'],
       media: {
-        length: i.enclosure.length,
-        type: i.enclosure.type,
-        url: i.enclosure.url
+        length: i.enclosure?.length,
+        type: i.enclosure?.type,
+        url: i.enclosure?.url
       },
       updateTime: String(+new Date()),
       feedId: -1
@@ -56,30 +59,30 @@ export const addPodcast = async (channel: any, rss: string) => {
 
     const isExist = await podcastDB.feeds.where('rss').equals(rss).first()
 
+    let feedId = isExist?.id ?? -1
+    // 如果已经存在，清除原有数据，不存在就创建
     if (isExist && isExist.id) {
       // 清除原有数据
       podcastDB.items.where('feedId').equals(isExist.id).delete()
-
-      podcastDB.feeds.where('id').equals(isExist.id).delete()
-
       Message.success('订阅清理成功')
+    } else {
+      // 增加
+      const res = await podcastDB.createPodcast({
+        ...podcastInfo
+      })
+      console.log(1, res)
+      feedId = Number(res)
+      Message.success('订阅添加成功')
     }
-    // 增加
-    const res = await podcastDB.createPodcast({
-      ...podcastInfo
-    })
-    console.log(1, res)
-    Message.success('订阅添加成功')
-
-    // podcastDB.items.clear()
 
     podcastList.forEach((i) => {
-      i.feedId = res as number
+      i.feedId = feedId
     })
 
     podcastDB.items.bulkAdd(podcastList)
     Message.success('列表添加成功')
   } catch (error: any) {
+    console.log(1, error)
     Message.error(error.message)
   }
 }
