@@ -45,7 +45,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PlayCircle, PauseCircle, Undo, Redo, Gauge } from 'lucide-vue-next'
+import { PlayCircle, PauseCircle, Undo, Redo } from 'lucide-vue-next'
 import { usePlayer, secondsToHMS } from './audio-player/model'
 import { Download } from 'lucide-vue-next'
 
@@ -91,11 +91,9 @@ const {
   videoPlayStatus,
   togglePlay: _togglePlay,
   forward: _forward,
-  jumpTime,
   videoSpeed: _videoSpeed,
   currentTime,
-  showTime,
-  videoSpeedNumber
+  showTime
 } = usePlayer()
 
 const forward = (second: number) => {
@@ -125,7 +123,7 @@ const setCurrentSpeed = () => {
 let showTimeTimer: number
 
 const startTimer = () => {
-  showTimeTimer = setInterval(showTime, 1000)
+  showTimeTimer = setInterval(showTime, 1000) as unknown as number
 }
 const stopTimer = () => {
   if (showTimeTimer) {
