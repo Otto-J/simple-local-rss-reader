@@ -37,13 +37,17 @@
       <div class="cursor-pointer text-sm hover:text-slate-400" @click="videoSpeed">
         {{ currentSpeed }}x
       </div>
+      <!-- download -->
+      <a :href="props.url" download target="_blank">
+        <Download :size="16" class="text-slate-50 hover:text-slate-300" />
+      </a>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { PlayCircle, PauseCircle, Undo, Redo, Gauge } from 'lucide-vue-next'
 import { usePlayer, secondsToHMS } from './audio-player/model'
-import { Regex } from 'lucide-vue-next'
+import { Download } from 'lucide-vue-next'
 
 const props = withDefaults(
   defineProps<{

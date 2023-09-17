@@ -91,7 +91,7 @@ const parseInfo = (feedId: string) => {
     })
 }
 
-const parseStory = async (feedId: string, infoId: string) => {
+const parseStory = async (feedId: number, guid: string) => {
   const userId = await getUserId()
   if (userId === -1) {
     Message.error('未找到用户')
@@ -100,7 +100,8 @@ const parseStory = async (feedId: string, infoId: string) => {
 
   const storyDetail = await podcastDB.items
     .where({
-      feedId
+      feedId,
+      guid
     })
     .first()
 
@@ -112,7 +113,7 @@ const parseStory = async (feedId: string, infoId: string) => {
 watchEffect(() => {
   if (postInfo.value.feedId && postInfo.value.storyId) {
     parseInfo(postInfo.value.feedId)
-    parseStory(postInfo.value.feedId, postInfo.value.storyId)
+    parseStory(Number(postInfo.value.feedId), postInfo.value.storyId)
   }
 })
 </script>
